@@ -273,7 +273,7 @@ class RepositoryHandler:
             return "Please enter a query about the repository."
         
         try:
-            print(f"🔍 Querying repository: {query_text}")
+            logger.info(f"🔍 Querying repository: {query_text}")
             
             # Perform hybrid search
             results = self.vector_store.hybrid_search(

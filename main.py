@@ -83,7 +83,7 @@ def process_chunks():
     try:
         success, message = background_processing()
         if success:
-            return message, "enabled"  # Enable query functionality
+            return message, "Ask AI"  # Enable query functionality
         else:
             return message, "disabled"
     except Exception as e:
@@ -111,7 +111,7 @@ def get_repo_stats():
         try:
             # Get repository overview from vector store
             overview = repo_handler.vector_store.get_repository_overview(repo_handler.repo_name)
-            
+            logger.debug(f"Repository overview: {overview}")
             if "error" not in overview:
                 stats = f"""📊 **Repository Statistics**
 
@@ -197,10 +197,10 @@ def get_llm_status():
 def create_interface():
     """Create the Gradio interface"""
     
-    with gr.Blocks(title="Code Repository Analyzer", theme=gr.themes.Soft()) as demo:
+    with gr.Blocks(title="Code Compass", theme=gr.themes.Soft()) as demo:
         
         gr.Markdown("""
-        # 🔍 Code Repository Analyzer
+        # 🔍 Code Compass
         
         Upload your repository via GitHub URL or ZIP file, process it with AI-powered chunking, and query your codebase using semantic search!
         """)
@@ -300,31 +300,31 @@ def create_interface():
                 )
         
         # Advanced options (collapsible)
-        with gr.Accordion("🛠️ Advanced Options", open=False):
-            with gr.Row():
-                with gr.Column():
-                    gr.Markdown("### 🔧 Pinecone Configuration")
-                    api_key_input = gr.Textbox(
-                        label="Pinecone API Key",
-                        placeholder="Enter your Pinecone API key (or set PINECONE_API_KEY env var)",
-                        type="password"
-                    )
-                    environment_input = gr.Textbox(
-                        label="Pinecone Environment",
-                        value="us-west1-gcp-free",
-                        placeholder="e.g., us-west1-gcp-free"
-                    )
+        # with gr.Accordion("🛠️ Advanced Options", open=False):
+        #     with gr.Row():
+        #         with gr.Column():
+        #             gr.Markdown("### 🔧 Pinecone Configuration")
+        #             api_key_input = gr.Textbox(
+        #                 label="Pinecone API Key",
+        #                 placeholder="Enter your Pinecone API key (or set PINECONE_API_KEY env var)",
+        #                 type="password"
+        #             )
+        #             environment_input = gr.Textbox(
+        #                 label="Pinecone Environment",
+        #                 value="us-west1-gcp-free",
+        #                 placeholder="e.g., us-west1-gcp-free"
+        #             )
                 
-                with gr.Column():
-                    gr.Markdown("### 📈 Processing Options")
-                    complexity_threshold = gr.Slider(
-                        minimum=5,
-                        maximum=50,
-                        value=20,
-                        step=5,
-                        label="Complexity Threshold",
-                        info="Functions above this complexity will be sub-chunked"
-                    )
+        #         with gr.Column():
+        #             gr.Markdown("### 📈 Processing Options")
+        #             complexity_threshold = gr.Slider(
+        #                 minimum=5,
+        #                 maximum=50,
+        #                 value=20,
+        #                 step=5,
+        #                 label="Complexity Threshold",
+        #                 info="Functions above this complexity will be sub-chunked"
+        #             )
         
         # Event handlers
         def toggle_inputs(choice):

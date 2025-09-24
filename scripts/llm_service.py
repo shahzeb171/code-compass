@@ -207,12 +207,12 @@ Always be helpful, accurate, and focused on the user's specific needs."""
                 logger.info("✅ Qwen2.5-Coder model loaded successfully!")
                 
                 # Test the model with a simple query
-                test_response = self.llm.create_chat_completion(
-                    messages=[{"role": "user", "content": "Hello, are you working?"}],
-                    max_tokens=50,
-                    temperature=0.1
-                )
-                logger.info(f"🧪 Model test: {test_response['choices'][0]['message']['content'][:50]}...")
+                # test_response = self.llm.create_chat_completion(
+                #     messages=[{"role": "user", "content": "Hello, are you working?"}],
+                #     max_tokens=50,
+                #     temperature=0.1
+                # )
+                # logger.info(f"🧪 Model test: {test_response['choices'][0]['message']['content'][:50]}...")
                 
             except Exception as e:
                 logger.info(f"❌ Error loading model: {str(e)}")

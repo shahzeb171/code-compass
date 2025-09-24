@@ -28,8 +28,8 @@ An AI-powered tool for analyzing code repositories using hierarchical chunking a
 
 1. **Clone or download this project**
    ```bash
-   git clone <your-repo-url>
-   cd code-repository-analyzer
+   git clone https://github.com/shahzeb171/code-compass.git
+   cd code-compass
    ```
 
 2. **Install dependencies**
@@ -38,26 +38,21 @@ An AI-powered tool for analyzing code repositories using hierarchical chunking a
    ```
 
 3. **Download the LLM model**
-   ```bash
-   python download_model.py
    ```
-   
-   **Recommended**: Select option 1 (Q4_K_M) for the best balance of quality and performance.
+   wget https://huggingface.co/bartowski/Qwen2.5-Coder-7B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf
+   ```
+   **Recommended**: Select Q4_K_M for the best balance of quality and performance.
 
 4. **Set up Pinecone API Key**
    
-   Option A - Environment Variable (Recommended):
-   ```bash
-   export PINECONE_API_KEY="your-pinecone-api-key-here"
-   ```
-   
-   Option B - Create `.env` file:
+   Create `config.py` file:
    ```
    PINECONE_API_KEY=your-pinecone-api-key-here
+   PINECONE_INDEX_NAME=index_name(eg. code_compass_index)
+   PINECONE_EMBEDDING_MODEL=embedding_model(eg. llama-text-embed-v2 (check pinecone docs for more models))
+   MODEL_PATH=path_to_the_model
    ```
    
-   Option C - Enter in the web interface under "Advanced Options"
-
 ### Getting Your Pinecone API Key
 
 1. Go to [Pinecone.io](https://www.pinecone.io/) and sign up for a free account
@@ -132,12 +127,6 @@ The system creates multiple levels of code chunks:
 5. **Ranked Results**: Most relevant code sections returned with similarity scores
 
 ## 🔧 Configuration Options
-
-### Advanced Settings (in web interface)
-
-- **Pinecone Environment**: Default is "us-west1-gcp-free" for free tier
-- **Complexity Threshold**: Controls when functions are sub-chunked (default: 20)
-- **Embedding Model**: Uses "all-MiniLM-L6-v2" for fast, accurate embeddings
 
 ### Supported Languages
 
@@ -222,10 +211,6 @@ Try these public repositories:
 - **Team Collaboration**: Share analyzed repositories
 - **Custom Embeddings**: Fine-tuned models for specific domains
 - **API Integration**: REST API for programmatic access
-
-## 📄 License
-
-MIT License - see LICENSE file for details
 
 ## 🤝 Contributing
 

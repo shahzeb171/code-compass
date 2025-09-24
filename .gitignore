@@ -1,0 +1,5 @@
+# Ignore compiled Python files
+scripts/__pycache__/*.pyc
+config.py
+models/
+logs/

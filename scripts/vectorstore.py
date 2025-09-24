@@ -204,6 +204,13 @@ class PineconeVectorStore:
         logger.info(f"✅ Upsert complete! {successful_upserts} successful, {failed_upserts} failed")
         return result
     
+    def safe_json_store(self, final_metadata):
+        try:
+            return json.dumps(final_metadata, ensure_ascii=False)
+        except (TypeError, ValueError):
+            # fallback: force conversion to string and JSON-escape it
+            return json.dumps(str(final_metadata), ensure_ascii=False)
+        
     def _prepare_metadata_for_pinecone(self, metadata: Dict[str, Any]) -> Dict[str, Any]:
         """
         Prepare metadata for Pinecone storage (handles size and type limitations)
@@ -266,8 +273,10 @@ class PineconeVectorStore:
                 # Last resort - convert to string
                 final_metadata[key] = str(value)[:200]
         
-        return str(final_metadata).replace("'", '"')  # Store as JSON string
+        return self.safe_json_store(final_metadata)#.replace("'", '"')  # Store as JSON string
     
+    
+
     def query_similar_chunks(self, 
                            query_text: str, 
                            top_k: int = 10,
@@ -342,21 +351,32 @@ class PineconeVectorStore:
             logger.info(f"🔍 Querying by metadata: {filter_dict}")
             
             # Use a dummy vector for metadata-only search
-            dummy_vector = [0.0] #* self.dimension
+            dummy_vector = [0.0] *1024 #* self.dimension
             
-            search_results = self.index.query(
-                vector=dummy_vector,
-                top_k=top_k,
-                filter=filter_dict,
-                include_metadata=True
+            search_results = self.index.search(
+                namespace=self.namespace,
+                query={"inputs": {"text": filter_dict['repo_name']}, "top_k": top_k},
             )
             
+            
+            # self.index.query(
+            #     vector=dummy_vector,
+            #     namespace=self.namespace,
+            #     top_k=top_k,
+            #     filter=filter_dict,
+            #     include_metadata=True
+            # )
+            
             results = []
-            for match in search_results.matches:
+            if 'result' not in search_results or 'hits' not in search_results['result']:
+                logger.info("⚠️  No results found in search response")
+                return []
+            for match in search_results['result']['hits']:
                 result = {
-                    'id': match.id,
-                    'score': float(match.score),
-                    'metadata': match.metadata
+                    'id': match['_id'],
+                    'chunk_text': match['fields']['chunk_text'],
+                    'score': float(match['_score']),
+                    'metadata': json.loads(match['fields']['metadata']) #if include_metadata else None
                 }
                 results.append(result)
             
@@ -508,6 +528,7 @@ class PineconeVectorStore:
             for result  in results:
                 result['search_type'] = 'hybrid'
                 result['query'] = query_text[:100]
+                logger.debug(f"Result metadata: {result.get('metadata', {})}")
                 result['metadata'] = json.loads(result.get('metadata', '{}'))
                 # Add relevance explanation based on chunk type
                 # logger.debug(f"Result metadata: {json.loads(result.get('metadata', {}))}")
