@@ -38,6 +38,8 @@ setup_logger()
 logger = logging.getLogger("code_compass")
 # Global repository handler instance
 repo_handler = RepositoryHandler()
+if not os.path.exists("models/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf"):
+    os.system("wget -q https://huggingface.co/bartowski/Qwen2.5-Coder-7B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf -O models/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf")
 
 
 def process_repository(input_type, github_url, zip_file):
