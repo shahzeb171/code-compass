@@ -2,6 +2,8 @@
 
 An AI-powered tool for analyzing code repositories using hierarchical chunking and semantic search with Pinecone vector database.
 ![Demo Screenshot](images/CC1.PNG)
+![Demo Screenshot](images/CC2.PNG)
+![Demo Screenshot](images/CC3.PNG)
 
 ## 🚀 Features
 
