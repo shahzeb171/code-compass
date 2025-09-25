@@ -5,11 +5,11 @@ from pathlib import Path
 from scripts.RepositoryHandler import RepositoryHandler
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "7"
 
 # --- Setup Logging ---
 def setup_logger():
-    log_dir = Path("/data/home/sqamar/code-compass/logs")
+    log_dir = Path("logs")
     log_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M")
     log_file = log_dir / f"{timestamp}_code_compass.log"
@@ -36,11 +36,13 @@ def setup_logger():
 
 setup_logger()
 logger = logging.getLogger("code_compass")
-# Global repository handler instance
-repo_handler = RepositoryHandler()
+
 if not os.path.exists("models/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf"):
+    Path("models").mkdir(parents=True, exist_ok=True)
     os.system("wget -q https://huggingface.co/bartowski/Qwen2.5-Coder-7B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf -O models/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf")
 
+# Global repository handler instance
+repo_handler = RepositoryHandler()
 
 def process_repository(input_type, github_url, zip_file):
     """Process repository based on input type"""

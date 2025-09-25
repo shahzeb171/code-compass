@@ -387,102 +387,102 @@ class PineconeVectorStore:
             logger.info(f"❌ Error querying by metadata: {str(e)}")
             return []
     
-    def get_chunk_by_id(self, chunk_id: str) -> Optional[Dict[str, Any]]:
-        """
-        Retrieve a specific chunk by its ID
+    # def get_chunk_by_id(self, chunk_id: str) -> Optional[Dict[str, Any]]:
+    #     """
+    #     Retrieve a specific chunk by its ID
         
-        Args:
-            chunk_id: Unique chunk identifier
+    #     Args:
+    #         chunk_id: Unique chunk identifier
             
-        Returns:
-            Chunk data or None if not found
-        """
-        try:
-            result = self.index.fetch(ids=[chunk_id])
+    #     Returns:
+    #         Chunk data or None if not found
+    #     """
+    #     try:
+    #         result = self.index.fetch(ids=[chunk_id])
             
-            if chunk_id in result.vectors:
-                vector_data = result.vectors[chunk_id]
-                return {
-                    'id': chunk_id,
-                    'values': vector_data.values,
-                    'metadata': vector_data.metadata
-                }
-            else:
-                logger.info(f"⚠️  Chunk {chunk_id} not found")
-                return None
+    #         if chunk_id in result.vectors:
+    #             vector_data = result.vectors[chunk_id]
+    #             return {
+    #                 'id': chunk_id,
+    #                 'values': vector_data.values,
+    #                 'metadata': vector_data.metadata
+    #             }
+    #         else:
+    #             logger.info(f"⚠️  Chunk {chunk_id} not found")
+    #             return None
                 
-        except Exception as e:
-            logger.info(f"❌ Error fetching chunk {chunk_id}: {str(e)}")
-            return None
+    #     except Exception as e:
+    #         logger.info(f"❌ Error fetching chunk {chunk_id}: {str(e)}")
+    #         return None
     
-    def delete_chunks_by_repo(self, repo_name: str) -> Dict[str, Any]:
-        """
-        Delete all chunks belonging to a specific repository
+    # def delete_chunks_by_repo(self, repo_name: str) -> Dict[str, Any]:
+    #     """
+    #     Delete all chunks belonging to a specific repository
         
-        Args:
-            repo_name: Name of the repository to delete
+    #     Args:
+    #         repo_name: Name of the repository to delete
             
-        Returns:
-            Deletion results
-        """
-        try:
-            logger.info(f"🗑️  Deleting all chunks for repository: {repo_name}")
+    #     Returns:
+    #         Deletion results
+    #     """
+    #     try:
+    #         logger.info(f"🗑️  Deleting all chunks for repository: {repo_name}")
             
-            # Query for all chunks from this repo
-            chunks_to_delete = self.query_by_metadata(
-                filter_dict={"repo_name": repo_name},
-                top_k=10000  # High number to get all chunks
-            )
+    #         # Query for all chunks from this repo
+    #         chunks_to_delete = self.query_by_metadata(
+    #             filter_dict={"repo_name": repo_name},
+    #             top_k=10000  # High number to get all chunks
+    #         )
             
-            if not chunks_to_delete:
-                return {"status": "success", "message": "No chunks found for this repository"}
+    #         if not chunks_to_delete:
+    #             return {"status": "success", "message": "No chunks found for this repository"}
             
-            # Extract IDs
-            chunk_ids = [chunk['id'] for chunk in chunks_to_delete]
+    #         # Extract IDs
+    #         chunk_ids = [chunk['id'] for chunk in chunks_to_delete]
             
-            # Delete in batches
-            batch_size = 96
-            deleted_count = 0
+    #         # Delete in batches
+    #         batch_size = 96
+    #         deleted_count = 0
             
-            for i in range(0, len(chunk_ids), batch_size):
-                batch_ids = chunk_ids[i:i + batch_size]
+    #         for i in range(0, len(chunk_ids), batch_size):
+    #             batch_ids = chunk_ids[i:i + batch_size]
                 
-                try:
-                    delete_response = self.index.delete(ids=batch_ids)
-                    deleted_count += len(batch_ids)
-                    logger.info(f"🗑️  Deleted batch {i//batch_size + 1} ({len(batch_ids)} chunks)")
+    #             try:
+    #                 delete_response = self.index.delete(ids=batch_ids)
+    #                 deleted_count += len(batch_ids)
+    #                 logger.info(f"🗑️  Deleted batch {i//batch_size + 1} ({len(batch_ids)} chunks)")
                     
-                except Exception as e:
-                    logger.info(f"❌ Error deleting batch: {str(e)}")
+    #             except Exception as e:
+    #                 logger.info(f"❌ Error deleting batch: {str(e)}")
             
-            result = {
-                "status": "success",
-                "deleted_count": deleted_count,
-                "repo_name": repo_name,
-                "timestamp": datetime.now().isoformat()
-            }
+    #         result = {
+    #             "status": "success",
+    #             "deleted_count": deleted_count,
+    #             "repo_name": repo_name,
+    #             "timestamp": datetime.now().isoformat()
+    #         }
             
-            logger.info(f"✅ Deleted {deleted_count} chunks for repository {repo_name}")
-            return result
+    #         logger.info(f"✅ Deleted {deleted_count} chunks for repository {repo_name}")
+    #         return result
             
-        except Exception as e:
-            logger.info(f"❌ Error deleting chunks for repo {repo_name}: {str(e)}")
-            return {"status": "error", "message": str(e)}
+    #     except Exception as e:
+    #         logger.info(f"❌ Error deleting chunks for repo {repo_name}: {str(e)}")
+    #         return {"status": "error", "message": str(e)}
     
-    def get_index_stats(self) -> Dict[str, Any]:
-        """Get statistics about the Pinecone index"""
-        try:
-            stats = self.index.describe_index_stats()
-            return {
-                "total_vectors": stats.get('total_vector_count', 0),
-                "index_fullness": stats.get('index_fullness', 0),
-                "dimension": stats.get('dimension', self.dimension),
-                "namespaces": stats.get('namespaces', {}),
-                "timestamp": datetime.now().isoformat()
-            }
-        except Exception as e:
-            logger.info(f"❌ Error getting index stats: {str(e)}")
-            return {"error": str(e)}
+    # def get_index_stats(self) -> Dict[str, Any]:
+    #     """Get statistics about the Pinecone index"""
+    #     try:
+    #         stats = self.index.describe_index_stats()
+    #         return {
+    #             "total_vectors": stats.get('total_vector_count', 0),
+    #             "index_fullness": stats.get('index_fullness', 0),
+    #             "dimension": stats.get('dimension', self.dimension),
+    #             "namespaces": stats.get('namespaces', {}),
+    #             "timestamp": datetime.now().isoformat()
+    #         }
+    #     except Exception as e:
+    #         logger.info(f"❌ Error getting index stats: {str(e)}")
+    #         return {"error": str(e)}
     
     def hybrid_search(self, 
                      query_text: str,
@@ -613,17 +613,17 @@ class PineconeVectorStore:
             logger.info(f"❌ Error getting repository overview: {str(e)}")
             return {"error": str(e)}
     
-    def cleanup_old_chunks(self, days_old: int = 30) -> Dict[str, Any]:
-        """
-        Clean up old chunks based on timestamp
+    # def cleanup_old_chunks(self, days_old: int = 30) -> Dict[str, Any]:
+    #     """
+    #     Clean up old chunks based on timestamp
         
-        Args:
-            days_old: Delete chunks older than this many days
+    #     Args:
+    #         days_old: Delete chunks older than this many days
             
-        Returns:
-            Cleanup results
-        """
-        # This would require storing timestamps in metadata and querying by date
-        # Implementation depends on your specific cleanup needs
-        logger.info(f"🧹 Cleanup functionality not implemented yet")
-        return {"status": "not_implemented"}
+    #     Returns:
+    #         Cleanup results
+    #     """
+    #     # This would require storing timestamps in metadata and querying by date
+    #     # Implementation depends on your specific cleanup needs
+    #     logger.info(f"🧹 Cleanup functionality not implemented yet")
+    #     return {"status": "not_implemented"}

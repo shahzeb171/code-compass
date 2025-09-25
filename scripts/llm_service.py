@@ -101,7 +101,7 @@ class QwenCoderLLM:
                  temperature: float = 0.1,  # Low temperature for code tasks
                  max_tokens: int = 1024):
         
-        self.model_path = model_path or self._get_model_path()
+        self.model_path = model_path# or self._get_model_path()
         self.n_ctx = n_ctx
         self.n_threads = n_threads
         self.n_gpu_layers = n_gpu_layers
@@ -122,27 +122,27 @@ class QwenCoderLLM:
         # Initialize system message
         self.conversation.add_message("system", self.system_prompt)
     
-    def _get_model_path(self) -> str:
-        """Get model path, with instructions for download if not found"""
-        possible_paths = [
-            "./models/qwen2.5-coder-7b-instruct-q4_k_m.gguf",
-            "./qwen2.5-coder-7b-instruct-q4_k_m.gguf",
-            os.path.expanduser("~/models/qwen2.5-coder-7b-instruct-q4_k_m.gguf"),
-        ]
+    # def _get_model_path(self) -> str:
+    #     """Get model path, with instructions for download if not found"""
+    #     possible_paths = [
+    #         "./models/qwen2.5-coder-7b-instruct-q4_k_m.gguf",
+    #         "./qwen2.5-coder-7b-instruct-q4_k_m.gguf",
+    #         os.path.expanduser("~/models/qwen2.5-coder-7b-instruct-q4_k_m.gguf"),
+    #     ]
         
-        for path in possible_paths:
-            if os.path.exists(path):
-                return path
+    #     for path in possible_paths:
+    #         if os.path.exists(path):
+    #             return path
         
-        # Model not found - provide download instructions
-        logger.info("🔍 Qwen2.5-Coder model not found!")
-        logger.info("📥 Please download the quantized model:")
-        logger.info("   wget https://huggingface.co/bartowski/Qwen2.5-Coder-7B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf")
-        logger.info("   mv Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf qwen2.5-coder-7b-instruct-q4_k_m.gguf")
-        logger.info()
+    #     # Model not found - provide download instructions
+    #     logger.info("🔍 Qwen2.5-Coder model not found!")
+    #     logger.info("📥 Please download the quantized model:")
+    #     logger.info("   wget https://huggingface.co/bartowski/Qwen2.5-Coder-7B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf")
+    #     logger.info("   mv Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf qwen2.5-coder-7b-instruct-q4_k_m.gguf")
+    #     logger.info()
         
-        # Return first path as placeholder
-        return possible_paths[0]
+    #     # Return first path as placeholder
+    #     return possible_paths[0]
     
     def _create_system_prompt(self) -> str:
         """Create system prompt for code analysis tasks"""
